@@ -204,7 +204,7 @@ package main
 import (
     "encoding/json"
     "fmt"
-    "io/ioutil"
+    "os"
     "strings"
 )
 
@@ -223,7 +223,7 @@ func NewConfigLoader(configPath string) *ConfigLoader {
 }
 
 func (c *ConfigLoader) Load() error {
-    data, err := ioutil.ReadFile(c.configPath)
+    data, err := os.ReadFile(c.configPath)
     if err != nil {
         return fmt.Errorf("failed to read config file: %w", err)
     }

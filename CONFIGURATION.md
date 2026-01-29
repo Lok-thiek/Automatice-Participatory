@@ -32,7 +32,7 @@ The global configuration is stored in `liveplatform.config.json` at the root of 
 
 ### API Configuration
 
-- **baseUrl**: Base URL for API endpoints
+- **baseUrl**: Base URL for API endpoints (Note: Replace "https://api.example.com" with your actual API endpoint before deployment)
 - **version**: API version identifier
 - **timeout**: Request timeout in milliseconds
 - **retryAttempts**: Number of retry attempts for failed requests
@@ -61,7 +61,7 @@ The global configuration is stored in `liveplatform.config.json` at the root of 
 - **enableSSL**: Require SSL/TLS connections
 - **sslVerification**: Verify SSL certificates
 - **corsEnabled**: Enable Cross-Origin Resource Sharing
-- **allowedOrigins**: Array of allowed CORS origins (* for all)
+- **allowedOrigins**: Array of allowed CORS origins (⚠️ WARNING: "*" allows all origins and should ONLY be used in development. In production, specify explicit domains like ["https://yourdomain.com", "https://app.yourdomain.com"])
 - **contentSecurityPolicy**: Content Security Policy header value
 - **enableHSTS**: Enable HTTP Strict Transport Security
 
@@ -143,6 +143,8 @@ These files should override the base configuration values as needed.
 4. Regularly review and update security settings
 5. Enable SSL/TLS for all production environments
 6. Use strong authentication mechanisms and enable MFA when possible
+7. **⚠️ CRITICAL**: Replace the wildcard "*" in `allowedOrigins` with explicit domain names in production to prevent CSRF attacks
+8. **⚠️ CRITICAL**: Update `api.baseUrl` from the placeholder "https://api.example.com" to your actual API endpoint
 
 ## Validation
 
