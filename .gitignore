@@ -1,0 +1,49 @@
+# Environment-specific configuration files (may contain secrets)
+liveplatform.config.*.json
+!liveplatform.config.json
+
+# Log files
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules (if Node.js is used)
+node_modules/
+
+# Python cache (if Python is used)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build artifacts
+dist/
+build/
+*.o
+*.so
+
+# Secrets and credentials
+secrets/
+*.key
+*.pem
+*.crt
+*.p12
+credentials.json
