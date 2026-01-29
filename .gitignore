@@ -1,6 +1,7 @@
 # Environment-specific configuration files (may contain secrets)
 liveplatform.config.*.json
 !liveplatform.config.json
+!liveplatform.config.schema.json
 
 # Log files
 logs/
