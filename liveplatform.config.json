@@ -1,0 +1,87 @@
+{
+  "platform": {
+    "name": "Automatice-Participatory Live Platform",
+    "version": "1.0.0",
+    "environment": "production"
+  },
+  "global": {
+    "enabled": true,
+    "timezone": "UTC",
+    "language": "en-US",
+    "dateFormat": "YYYY-MM-DD",
+    "timeFormat": "HH:mm:ss"
+  },
+  "authentication": {
+    "enabled": true,
+    "sessionTimeout": 3600,
+    "maxLoginAttempts": 5,
+    "lockoutDuration": 900,
+    "requireMFA": false
+  },
+  "api": {
+    "baseUrl": "https://api.example.com",
+    "version": "v1",
+    "timeout": 30000,
+    "retryAttempts": 3,
+    "rateLimiting": {
+      "enabled": true,
+      "maxRequestsPerMinute": 60
+    }
+  },
+  "database": {
+    "connectionPoolSize": 10,
+    "queryTimeout": 30000,
+    "enableLogging": false
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "enableConsole": true,
+    "enableFile": true,
+    "logDirectory": "./logs",
+    "maxFileSize": "10MB",
+    "maxFiles": 30
+  },
+  "security": {
+    "enableSSL": true,
+    "sslVerification": true,
+    "corsEnabled": true,
+    "allowedOrigins": ["*"],
+    "contentSecurityPolicy": "default-src 'self'",
+    "enableHSTS": true
+  },
+  "features": {
+    "participatory": {
+      "enabled": true,
+      "autoApproval": false,
+      "moderationRequired": true
+    },
+    "automation": {
+      "enabled": true,
+      "scheduledTasks": true,
+      "webhooks": true
+    },
+    "notifications": {
+      "enabled": true,
+      "channels": ["email", "push", "sms"],
+      "defaultChannel": "email"
+    }
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "ttl": 3600,
+      "provider": "memory"
+    },
+    "compression": {
+      "enabled": true,
+      "level": 6
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "metricsInterval": 60,
+    "healthCheckEndpoint": "/health",
+    "statusCheckEndpoint": "/status"
+  }
+}
