@@ -3,6 +3,9 @@ liveplatform.config.*.json
 !liveplatform.config.json
 !liveplatform.config.schema.json
 
+# Test configuration files
+*.test.json
+
 # Log files
 logs/
 *.log
