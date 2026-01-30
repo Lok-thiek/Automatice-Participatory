@@ -6,6 +6,8 @@ An automated participatory platform with global configuration management.
 
 The platform uses a global configuration file for system-wide settings. See [CONFIGURATION.md](CONFIGURATION.md) for detailed documentation on all available configuration options.
 
+For automation and auto-fixing tools, see [AUTOMATION.md](AUTOMATION.md).
+
 ### Quick Start
 
 1. Review the global configuration in `liveplatform.config.json`
@@ -30,6 +32,31 @@ The platform uses a global configuration file for system-wide settings. See [CON
 - **Auto-Fix Tool**: Automatically detect and fix configuration issues
 
 ## Tools
+
+### NPM Scripts
+
+For convenience, you can use npm scripts:
+
+```bash
+# Full automation
+npm run automate
+
+# Auto-fix only (non-interactive)
+npm run automate:fix
+
+# Validate only (for CI/CD)
+npm run automate:ci
+
+# Configuration validation
+npm run validate
+npm test  # alias for validate
+
+# Auto-fix with prompts
+npm run fix
+
+# Auto-fix without prompts
+npm run fix:auto
+```
 
 ### Master Automation Script
 
