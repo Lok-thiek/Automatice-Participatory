@@ -76,6 +76,17 @@ class ConfigAutoFix {
   async analyzeAndFix() {
     log('\n🔍 Analyzing configuration for issues...', colors.blue);
     
+    // Ensure required sections exist
+    if (!this.config.platform) this.config.platform = {};
+    if (!this.config.global) this.config.global = {};
+    if (!this.config.api) this.config.api = {};
+    if (!this.config.security) this.config.security = {};
+    if (!this.config.database) this.config.database = {};
+    if (!this.config.logging) this.config.logging = {};
+    if (!this.config.performance) this.config.performance = {};
+    if (!this.config.performance.caching) this.config.performance.caching = {};
+    if (!this.config.performance.compression) this.config.performance.compression = {};
+    
     // Check and fix placeholder API URL
     await this.fixPlaceholderApiUrl();
     
@@ -110,7 +121,16 @@ class ConfigAutoFix {
         const newUrl = await this.prompt('  Enter your actual API base URL (or press Enter to skip): ');
         if (newUrl && newUrl.trim()) {
           try {
-            new URL(newUrl);
+            const url = new URL(newUrl);
+            // Validate protocol for production
+            if (this.config.platform.environment === 'production' && url.protocol !== 'https:') {
+              log('  ⚠️  Production API URLs should use https://', colors.yellow);
+              const proceed = await this.prompt('  Continue anyway? (y/n): ');
+              if (proceed.toLowerCase() !== 'y') {
+                log('  ✗ Skipping API URL update', colors.yellow);
+                return;
+              }
+            }
             this.config.api.baseUrl = newUrl.trim();
             this.fixes.push({
               field: 'api.baseUrl',
@@ -119,8 +139,8 @@ class ConfigAutoFix {
               reason: 'Replaced placeholder with actual API URL'
             });
             log(`  ✓ Updated API URL to: ${newUrl.trim()}`, colors.green);
-          } catch {
-            log('  ✗ Invalid URL, skipping...', colors.red);
+          } catch (error) {
+            log(`  ✗ Invalid URL format: ${error.message}`, colors.red);
           }
         }
       } else {
@@ -151,15 +171,29 @@ class ConfigAutoFix {
           const response = await this.prompt('  Enter allowed origins (comma-separated, or press Enter to skip): ');
           if (response && response.trim()) {
             const origins = response.split(',').map(o => o.trim()).filter(o => o);
-            if (origins.length > 0) {
-              this.config.security.allowedOrigins = origins;
+            // Validate each origin
+            const validOrigins = [];
+            for (const origin of origins) {
+              try {
+                const url = new URL(origin);
+                if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+                  log(`  ⚠️  Skipping invalid origin protocol: ${origin}`, colors.yellow);
+                  continue;
+                }
+                validOrigins.push(origin);
+              } catch (error) {
+                log(`  ⚠️  Skipping invalid origin URL: ${origin} - ${error.message}`, colors.yellow);
+              }
+            }
+            if (validOrigins.length > 0) {
+              this.config.security.allowedOrigins = validOrigins;
               this.fixes.push({
                 field: 'security.allowedOrigins',
                 from: ['*'],
-                to: origins,
+                to: validOrigins,
                 reason: 'Replaced wildcard CORS with explicit origins for production'
               });
-              log(`  ✓ Updated CORS origins to: ${origins.join(', ')}`, colors.green);
+              log(`  ✓ Updated CORS origins to: ${validOrigins.join(', ')}`, colors.green);
             }
           }
         } else {
@@ -179,7 +213,7 @@ class ConfigAutoFix {
       let changed = false;
       
       // Enable logging in development
-      if (this.config.database && !this.config.database.enableLogging) {
+      if (this.config.database && this.config.database.enableLogging === false) {
         this.config.database.enableLogging = true;
         changed = true;
         this.fixes.push({
@@ -192,11 +226,12 @@ class ConfigAutoFix {
       
       // Set debug logging in development
       if (this.config.logging && this.config.logging.level !== 'debug') {
+        const originalLevel = this.config.logging.level;
         this.config.logging.level = 'debug';
         changed = true;
         this.fixes.push({
           field: 'logging.level',
-          from: this.config.logging.level,
+          from: originalLevel,
           to: 'debug',
           reason: 'Set debug logging level for development environment'
         });
@@ -215,7 +250,7 @@ class ConfigAutoFix {
       let changed = false;
       
       // Ensure SSL is enabled in production
-      if (this.config.security && !this.config.security.enableSSL) {
+      if (this.config.security && this.config.security.enableSSL === false) {
         this.config.security.enableSSL = true;
         changed = true;
         this.fixes.push({
@@ -227,7 +262,7 @@ class ConfigAutoFix {
       }
       
       // Ensure HSTS is enabled in production
-      if (this.config.security && !this.config.security.enableHSTS) {
+      if (this.config.security && this.config.security.enableHSTS === false) {
         this.config.security.enableHSTS = true;
         changed = true;
         this.fixes.push({
@@ -239,7 +274,7 @@ class ConfigAutoFix {
       }
       
       // Disable database logging in production for performance
-      if (this.config.database && this.config.database.enableLogging) {
+      if (this.config.database && this.config.database.enableLogging === true) {
         this.config.database.enableLogging = false;
         changed = true;
         this.fixes.push({
@@ -258,7 +293,7 @@ class ConfigAutoFix {
 
   async optimizePerformanceSettings() {
     // Ensure caching is enabled for better performance
-    if (this.config.performance && this.config.performance.caching && !this.config.performance.caching.enabled) {
+    if (this.config.performance?.caching && this.config.performance.caching.enabled === false) {
       this.config.performance.caching.enabled = true;
       this.fixes.push({
         field: 'performance.caching.enabled',
@@ -270,7 +305,7 @@ class ConfigAutoFix {
     }
     
     // Ensure compression is enabled
-    if (this.config.performance && this.config.performance.compression && !this.config.performance.compression.enabled) {
+    if (this.config.performance?.compression && this.config.performance.compression.enabled === false) {
       this.config.performance.compression.enabled = true;
       this.fixes.push({
         field: 'performance.compression.enabled',
@@ -295,6 +330,7 @@ class ConfigAutoFix {
           log(`  ✓ Created log directory: ${logDir}`, colors.green);
         } catch (error) {
           log(`  ⚠️  Could not create log directory: ${error.message}`, colors.yellow);
+          log(`     You may need to create it manually or check file permissions.`, colors.yellow);
         }
       }
     }

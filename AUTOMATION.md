@@ -274,13 +274,13 @@ chmod +x automate.js auto-fix-config.js validate-config.js
 
 ### Custom Configuration Files
 
-All tools support custom configuration file paths:
+The validation and auto-fix tools support custom configuration file paths:
 
 ```bash
-node automate.js --config ./custom-config.json
 node auto-fix-config.js ./custom-config.json
-node validate-config.js ./custom-config.json
 ```
+
+Note: The master automation script (`automate.js`) currently uses the default configuration file. For custom configs, run the individual tools directly.
 
 ### Programmatic Usage
 
