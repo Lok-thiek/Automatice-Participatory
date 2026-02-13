@@ -1,0 +1,284 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Liveplatform Global Configuration Schema",
+  "description": "Schema for validating the global configuration file",
+  "type": "object",
+  "required": ["platform", "global"],
+  "properties": {
+    "platform": {
+      "type": "object",
+      "required": ["name", "version", "environment"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Platform name"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version"
+        },
+        "environment": {
+          "type": "string",
+          "enum": ["production", "staging", "development"],
+          "description": "Deployment environment"
+        }
+      }
+    },
+    "global": {
+      "type": "object",
+      "required": ["enabled", "timezone"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "dateFormat": {
+          "type": "string"
+        },
+        "timeFormat": {
+          "type": "string"
+        }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "sessionTimeout": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 86400
+        },
+        "maxLoginAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "lockoutDuration": {
+          "type": "integer",
+          "minimum": 60
+        },
+        "requireMFA": {
+          "type": "boolean"
+        }
+      }
+    },
+    "api": {
+      "type": "object",
+      "properties": {
+        "baseUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "version": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1000
+        },
+        "retryAttempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "rateLimiting": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "maxRequestsPerMinute": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "database": {
+      "type": "object",
+      "properties": {
+        "connectionPoolSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "queryTimeout": {
+          "type": "integer",
+          "minimum": 1000
+        },
+        "enableLogging": {
+          "type": "boolean"
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["debug", "info", "warn", "error"]
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "text"]
+        },
+        "enableConsole": {
+          "type": "boolean"
+        },
+        "enableFile": {
+          "type": "boolean"
+        },
+        "logDirectory": {
+          "type": "string"
+        },
+        "maxFileSize": {
+          "type": "string"
+        },
+        "maxFiles": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "enableSSL": {
+          "type": "boolean"
+        },
+        "sslVerification": {
+          "type": "boolean"
+        },
+        "corsEnabled": {
+          "type": "boolean"
+        },
+        "allowedOrigins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contentSecurityPolicy": {
+          "type": "string"
+        },
+        "enableHSTS": {
+          "type": "boolean"
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "participatory": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "autoApproval": {
+              "type": "boolean"
+            },
+            "moderationRequired": {
+              "type": "boolean"
+            }
+          }
+        },
+        "automation": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "scheduledTasks": {
+              "type": "boolean"
+            },
+            "webhooks": {
+              "type": "boolean"
+            }
+          }
+        },
+        "notifications": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "channels": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["email", "push", "sms"]
+              }
+            },
+            "defaultChannel": {
+              "type": "string",
+              "enum": ["email", "push", "sms"]
+            }
+          }
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "caching": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "ttl": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "provider": {
+              "type": "string",
+              "enum": ["memory", "redis", "memcached"]
+            }
+          }
+        },
+        "compression": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9
+            }
+          }
+        }
+      }
+    },
+    "monitoring": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "metricsInterval": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "healthCheckEndpoint": {
+          "type": "string"
+        },
+        "statusCheckEndpoint": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
