@@ -1,0 +1,30 @@
+{
+  "name": "automatice-participatory",
+  "version": "1.0.0",
+  "description": "An automated participatory platform with global configuration management",
+  "main": "index.js",
+  "scripts": {
+    "automate": "node automate.js",
+    "automate:ci": "node automate.js --validate-only",
+    "automate:fix": "node automate.js --no-interactive",
+    "fix": "node auto-fix-config.js",
+    "fix:auto": "node auto-fix-config.js --no-interactive",
+    "validate": "node validate-config.js",
+    "test": "npm run validate"
+  },
+  "keywords": [
+    "automation",
+    "configuration",
+    "participatory",
+    "platform"
+  ],
+  "author": "Automatice-Participatory Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lok-thiek/Automatice-Participatory.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
